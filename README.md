@@ -2,6 +2,13 @@
 
 This repository is a 'tutorial' of how to setup your own instance of [Nextcloud](https://nextcloud.com) with a PostgreSQL database.
 
+## To Do
+
+- [ ] Backup on AWS S3;
+- [ ] Allow synchronization with multiple devices;
+
+## Tutorial
+
 ### Steps to install Nextcloud with PostgreSQL
 
 ###### Create a virtual machine with Ubuntu 20.04;
