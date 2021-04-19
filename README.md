@@ -103,6 +103,8 @@ ServerName localhost
 Save the file and then run
 
 ```
+sudo rm -rf /etc/apache2/sites-enabled/000-default.conf
+sudo rm -rf /etc/apache2/sites-enabled/default-ssl.conf
 sudo a2ensite nextcloud.conf
 sudo a2enmod rewrite headers env dir mime setenvif ssl default-ssl
 sudo systemctl reload apache2
