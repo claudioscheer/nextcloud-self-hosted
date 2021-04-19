@@ -109,3 +109,5 @@ sudo systemctl reload apache2
 sudo systemctl restart apache2
 sudo systemctl enable apache2
 ```
+
+###### Nextcloud should be accessible on `localhost`;
