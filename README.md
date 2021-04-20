@@ -1,11 +1,11 @@
 ## Setup your own Nextcloud instance
 
-This repository is a 'tutorial' of how to setup your own instance of [Nextcloud](https://nextcloud.com) with a PostgreSQL database.
+This repository is a 'tutorial' of how to setup your own instance of [Nextcloud](https://nextcloud.com) with a PostgreSQL database. The tutorial also covers auto backup to AWS S3.
 
 ## To Do
 
-- [x] Backup on AWS S3;
-- [ ] Allow synchronization with multiple devices;
+- [x] Backup to AWS S3;
+- [ ] Allow synchronization with mobile devices connected to another network;
 
 ## Tutorial
 
@@ -25,7 +25,7 @@ sudo systemctl enable postgresql.service
 sudo systemctl status postgresql.service
 ```
 
-###### Change default user `postgres` password:
+###### Change default password for user `postgres`:
 
 ```
 sudo -u postgres psql
@@ -46,13 +46,13 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO nextcloud;
 \q
 ```
 
-###### Install PHP:
+###### Install PHP and modules required:
 
 ```
 sudo apt install php php-mbstring php-pgsql php-bz2 php-intl php-gmp php-apcu php-memcached php-redis php-imagick php-zip php-dompdf php-xml php-curl
 ```
 
-###### Download Nextcloud:
+###### Download and configure Nextcloud:
 
 ```
 wget https://download.nextcloud.com/server/releases/nextcloud-21.0.1.zip
@@ -112,7 +112,7 @@ sudo systemctl restart apache2
 sudo systemctl enable apache2
 ```
 
-###### Nextcloud should be accessible on `localhost`;
+###### Nextcloud should be accessible on `localhost`. Therefore, access it and finish the setup;
 
 ## Auto backup on S3
 
@@ -143,8 +143,8 @@ sudo systemctl enable apache2
 }
 ```
 
-- Create an user and attach the policy just created;
-- Create an access key for the new user;
+- Create an user and attach the policy created;
+- Create an access key for the user;
 - Install AWS CLI:
 
 ```
@@ -153,14 +153,12 @@ unzip awscliv2.zip
 sudo ./aws/install
 ```
 
-- Configure credentials:
+- Configure credentials for user and root:
 
 ```
 aws configure
 sudo aws configure
 ```
-
-Configure also as `sudo` to be able to run aws cli as root.
 
 - Create a script with the following content:
 
@@ -178,3 +176,5 @@ sudo rm $HOME/nextcloud_database.tar
 ```
 
 Here I'm running the script every day at 10 PM.
+
+- You now have your own Nextcloud instance running with automatic backups to AWS S3. As an additional step, you can configure the S3 bucket to use the [Amazon S3 Glacier](https://docs.aws.amazon.com/prescriptive-guidance/latest/backup-recovery/amazon-s3-glacier.html) options, which will save your money.
