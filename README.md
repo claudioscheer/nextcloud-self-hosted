@@ -4,7 +4,7 @@ This repository is a 'tutorial' of how to setup your own instance of [Nextcloud]
 
 ## To Do
 
-- [ ] Backup on AWS S3;
+- [x] Backup on AWS S3;
 - [ ] Allow synchronization with multiple devices;
 
 ## Tutorial
@@ -113,3 +113,68 @@ sudo systemctl enable apache2
 ```
 
 ###### Nextcloud should be accessible on `localhost`;
+
+## Auto backup on S3
+
+- Create a S3 bucket;
+- Create a policy with the following content:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::<s3-bucket>"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": "arn:aws:s3:::<s3-bucket>/*"
+        }
+    ]
+}
+```
+
+- Create an user and attach the policy just created;
+- Create an access key for the new user;
+- Install AWS CLI:
+
+```
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+- Configure credentials:
+
+```
+aws configure
+sudo aws configure
+```
+
+Configure also as `sudo` to be able to run aws cli as root.
+
+- Create a script with the following content:
+
+```
+sudo aws s3 sync /var/www/nextcloud/data s3://<s3-bucket>/nextcloud
+sudo -u postgres pg_dump nextcloud -F t > $HOME/nextcloud_database.tar
+sudo aws s3 cp $HOME/nextcloud_database.tar s3://<s3-bucket>/database/
+sudo rm $HOME/nextcloud_database.tar
+```
+
+- Run `sudo crontab -e` and schedule the script on `crontab`:
+
+```
+0 22 * * * sh <path>.sh
+```
+
+Here I'm running the script every day at 10 PM.
